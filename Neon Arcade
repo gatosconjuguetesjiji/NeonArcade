@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEON ARCADE - Retro Game Reviews</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Press+Start+2P&display=swap');
+
+        :root {
+            --neon-green: #39ff14;
+            --neon-pink: #ff00ff;
+            --neon-blue: #00f3ff;
+            --dark-bg: #050505;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            background-image: 
+                linear-gradient(rgba(57, 255, 20, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(57, 255, 20, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            color: #e0e0e0;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .neon-border-green {
+            border: 2px solid var(--neon-green);
+            box-shadow: 0 0 10px var(--neon-green), inset 0 0 5px var(--neon-green);
+        }
+
+        .neon-text-green {
+            color: var(--neon-green);
+            text-shadow: 0 0 5px var(--neon-green);
+        }
+
+        .neon-text-pink {
+            color: var(--neon-pink);
+            text-shadow: 0 0 5px var(--neon-pink);
+        }
+
+        .neon-text-blue {
+            color: var(--neon-blue);
+            text-shadow: 0 0 5px var(--neon-blue);
+        }
+
+        .retro-btn {
+            background: transparent;
+            border: 2px solid var(--neon-pink);
+            color: var(--neon-pink);
+            padding: 5px 15px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            transition: all 0.3s;
+        }
+
+        .retro-btn:hover {
+            background: var(--neon-pink);
+            color: black;
+            box-shadow: 0 0 15px var(--neon-pink);
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px var(--neon-blue);
+            border-color: var(--neon-blue);
+        }
+
+        .search-input {
+            background: #000;
+            border-bottom: 2px solid var(--neon-blue);
+            color: var(--neon-blue);
+            outline: none;
+        }
+
+        .search-input:focus {
+            box-shadow: 0 5px 15px -5px var(--neon-blue);
+        }
+
+        .sidebar-review {
+            border-left: 3px solid var(--neon-pink);
+            background: rgba(255, 0, 255, 0.03);
+        }
+
+        .platform-tag {
+            border: 1px solid var(--neon-blue);
+            padding: 10px;
+            transition: all 0.3s;
+            text-align: center;
+            background: rgba(0, 243, 255, 0.05);
+        }
+
+        .platform-tag:hover {
+            background: var(--neon-blue);
+            color: black;
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--neon-green);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header Section -->
+    <header class="border-b-4 border-green-500 bg-black p-4 sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl md:text-3xl neon-text-green font-bold tracking-tighter" style="font-family: 'Press Start 2P';">
+                NEON ARCADE
+            </h1>
+            <div class="flex gap-4">
+                <button class="retro-btn" onclick="toggleView('auth')">LOGIN</button>
+                <button class="retro-btn" style="border-color: var(--neon-blue); color: var(--neon-blue);" onclick="toggleView('auth')">SIGN UP</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Wrapper -->
+    <div id="main-site" class="container mx-auto mt-8 px-4 flex flex-col lg:flex-row gap-8 flex-grow">
+        
+        <!-- Left Side: Games and Search -->
+        <main class="flex-1">
+            <!-- Search Bar Section -->
+            <section class="mb-12">
+                <div class="neon-border-green p-6 bg-black rounded-lg">
+                    <h2 class="neon-text-green mb-4 text-xl">Navegador de Juegos</h2>
+                    <input type="text" id="searchInput" placeholder="BUSCAR TITULO..." class="w-full p-3 search-input text-lg">
+                    
+                    <!-- Search Results Overlay -->
+                    <div id="resultsDropdown" class="hidden mt-2 bg-black border border-cyan-400 max-h-48 overflow-y-auto z-10">
+                        <!-- Results injected here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Popular / New Section -->
+            <section class="mb-12">
+                <h3 class="neon-text-pink text-2xl mb-6 font-bold uppercase italic underline">Populares & Nuevos</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="popularContainer">
+                    <!-- Popular games injected here -->
+                </div>
+            </section>
+
+            <!-- Full List -->
+            <section class="mb-12">
+                <h3 class="neon-text-green text-2xl mb-6 font-bold uppercase italic underline">Biblioteca Completa</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4" id="allGamesContainer">
+                    <!-- 30+ games injected here -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Sidebar: Featured Reviews -->
+        <aside class="w-full lg:w-80">
+            <div class="lg:sticky lg:top-24">
+                <h3 class="text-black bg-pink-500 p-2 text-center font-bold mb-4 skew-x-[-10deg]">OPINIONES DESTACADAS</h3>
+                <div id="reviewsSidebar" class="space-y-4">
+                    <!-- 10 reviews injected here -->
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Footer: Featured Platforms -->
+    <footer class="mt-20 border-t-4 border-cyan-500 bg-black pt-10 pb-6">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-8">
+                <h4 class="neon-text-blue text-xl mb-2" style="font-family: 'Press Start 2P'; font-size: 14px;">DESCUBRE MÁS EN:</h4>
+                <p class="text-gray-500 text-xs">Las mejores plataformas para adquirir tus juegos favoritos</p>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
+                <div class="platform-tag">
+                    <p class="font-bold text-sm">STEAM</p>
+                    <p class="text-[9px] opacity-60">Valve Corp.</p>
+                </div>
+                <div class="platform-tag">
+                    <p class="font-bold text-sm">EPIC GAMES</p>
+                    <p class="text-[9px] opacity-60">Store</p>
+                </div>
+                <div class="platform-tag">
+                    <p class="font-bold text-sm">UBISOFT+</p>
+                    <p class="text-[9px] opacity-60">Uplay Connect</p>
+                </div>
+                <div class="platform-tag">
+                    <p class="font-bold text-sm">XBOX / MS</p>
+                    <p class="text-[9px] opacity-60">PC Game Pass</p>
+                </div>
+                <div class="platform-tag">
+                    <p class="font-bold text-sm">GOG.COM</p>
+                    <p class="text-[9px] opacity-60">DRM Free</p>
+                </div>
+                <div class="platform-tag">
+                    <p class="font-bold text-sm">EA APP</p>
+                    <p class="text-[9px] opacity-60">Electronic Arts</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-center text-[10px] text-gray-600 border-t border-gray-900 pt-6">
+                <p>© 198X - 2024 NEON ARCADE NETWORK. ALL RIGHTS RESERVED.</p>
+                <div class="flex gap-4 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-pink-500 transition">TERMINOS</a>
+                    <a href="#" class="hover:text-green-500 transition">PRIVACIDAD</a>
+                    <a href="#" class="hover:text-blue-500 transition">SOPORTE</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Separate Auth Page View (Mockup) -->
+    <div id="auth-page" class="hidden container mx-auto mt-20 px-4 text-center flex-grow">
+        <div class="max-w-md mx-auto neon-border-green p-10 bg-black">
+            <h2 class="neon-text-green text-3xl mb-8" style="font-family: 'Press Start 2P';">ACCESO</h2>
+            <input type="text" placeholder="USER ID" class="w-full p-3 search-input mb-4">
+            <input type="password" placeholder="PASSWORD" class="w-full p-3 search-input mb-8">
+            <button class="w-full retro-btn py-4 text-lg" onclick="toggleView('main')">ENTRAR AL SISTEMA</button>
+            <p class="mt-4 text-xs text-gray-500">Insert Coin to Continue</p>
+        </div>
+    </div>
+
+    <script>
+        // Database of 30+ real games
+        const games = [
+            { id: 1, name: "The Legend of Zelda: Tears of the Kingdom", year: 2023, genre: "Adventure", popular: true },
+            { id: 2, name: "Cyberpunk 2077", year: 2020, genre: "RPG", popular: true },
+            { id: 3, name: "Elden Ring", year: 2022, genre: "Action RPG", popular: true },
+            { id: 4, name: "Super Mario Bros. Wonder", year: 2023, genre: "Platformer", popular: true },
+            { id: 5, name: "Resident Evil 4 Remake", year: 2023, genre: "Horror", popular: false },
+            { id: 6, name: "Street Fighter 6", year: 2023, genre: "Fighting", popular: false },
+            { id: 7, name: "Hades", year: 2020, genre: "Roguelike", popular: false },
+            { id: 8, name: "The Last of Us Part II", year: 2020, genre: "Action", popular: false },
+            { id: 9, name: "Final Fantasy VII Rebirth", year: 2024, genre: "RPG", popular: false },
+            { id: 10, name: "God of War Ragnarök", year: 2022, genre: "Action", popular: false },
+            { id: 11, name: "Baldur's Gate 3", year: 2023, genre: "RPG", popular: false },
+            { id: 12, name: "Red Dead Redemption 2", year: 2018, genre: "Open World", popular: false },
+            { id: 13, name: "Grand Theft Auto V", year: 2013, genre: "Action", popular: false },
+            { id: 14, name: "Minecraft", year: 2011, genre: "Sandbox", popular: false },
+            { id: 15, name: "Dark Souls III", year: 2016, genre: "RPG", popular: false },
+            { id: 16, name: "Persona 5 Royal", year: 2019, genre: "JRPG", popular: false },
+            { id: 17, name: "Ghost of Tsushima", year: 2020, genre: "Action", popular: false },
+            { id: 18, name: "Alan Wake 2", year: 2023, genre: "Thriller", popular: false },
+            { id: 19, name: "Metroid Dread", year: 2021, genre: "Action", popular: false },
+            { id: 20, name: "Doom Eternal", year: 2020, genre: "FPS", popular: false },
+            { id: 21, name: "Sekiro: Shadows Die Twice", year: 2019, genre: "Action", popular: false },
+            { id: 22, name: "Spider-Man 2", year: 2023, genre: "Action", popular: false },
+            { id: 23, name: "Halo Infinite", year: 2021, genre: "FPS", popular: false },
+            { id: 24, name: "Starfield", year: 2023, genre: "Sci-Fi", popular: false },
+            { id: 25, name: "Animal Crossing: New Horizons", year: 2020, genre: "Sim", popular: false },
+            { id: 26, name: "Cuphead", year: 2017, genre: "Action", popular: false },
+            { id: 27, name: "Outer Wilds", year: 2019, genre: "Exploration", popular: false },
+            { id: 28, name: "Disco Elysium", year: 2019, genre: "RPG", popular: false },
+            { id: 29, name: "Tekken 8", year: 2024, genre: "Fighting", popular: false },
+            { id: 30, name: "Death Stranding", year: 2019, genre: "Action", popular: false },
+            { id: 31, name: "Bloodborne", year: 2015, genre: "RPG", popular: false },
+            { id: 32, name: "Horizon Forbidden West", year: 2022, genre: "Action", popular: false }
+        ];
+
+        const reviews = [
+            { game: "Elden Ring", user: "DarkKnight", comment: "Una obra maestra de la exploración.", useful: 1250 },
+            { game: "Baldur's Gate 3", user: "DiceMaster", comment: "El mejor RPG de la década sin duda.", useful: 980 },
+            { game: "Zelda: TotK", user: "LinkFan99", comment: "Construir máquinas es adictivo.", useful: 850 },
+            { game: "Cyberpunk 2077", user: "V_Snake", comment: "Después de los parches, es increíble.", useful: 720 },
+            { game: "Hades", user: "Zag_Boy", comment: "Imposible jugar solo una partida.", useful: 600 },
+            { game: "Bloodborne", user: "Hunter1", comment: "La atmósfera es inigualable.", useful: 550 },
+            { game: "Minecraft", user: "BlockHead", comment: "Sigue siendo el rey de la creatividad.", useful: 420 },
+            { game: "God of War", user: "KratosDad", comment: "Una historia que te llega al alma.", useful: 380 },
+            { game: "Doom Eternal", user: "Slayer", comment: "Pura adrenalina y metal.", useful: 310 },
+            { game: "Disco Elysium", user: "Harry", comment: "El mejor guion que he leído.", useful: 290 }
+        ];
+
+        function init() {
+            renderPopular();
+            renderAll();
+            renderReviews();
+            setupSearch();
+        }
+
+        function renderPopular() {
+            const container = document.getElementById('popularContainer');
+            const popular = games.filter(g => g.popular);
+            container.innerHTML = popular.map(g => `
+                <div class="game-card p-4 border border-pink-500 rounded flex gap-4 items-center">
+                    <div class="w-16 h-16 bg-pink-900 flex items-center justify-center text-[10px] text-center p-1 border border-pink-500">COVER</div>
+                    <div>
+                        <h4 class="neon-text-pink font-bold">${g.name}</h4>
+                        <p class="text-xs text-gray-400">${g.genre} | ${g.year}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderAll() {
+            const container = document.getElementById('allGamesContainer');
+            container.innerHTML = games.map(g => `
+                <div class="game-card p-3 border border-gray-700 text-sm">
+                    <p class="font-bold truncate">${g.name}</p>
+                    <p class="text-[10px] text-cyan-400 mt-1">${g.genre}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderReviews() {
+            const container = document.getElementById('reviewsSidebar');
+            container.innerHTML = reviews.map(r => `
+                <div class="sidebar-review p-3 text-xs mb-3">
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="neon-text-blue font-bold">${r.game}</span>
+                        <span class="text-[9px] text-pink-500">UTIL: ${r.useful}</span>
+                    </div>
+                    <p class="italic text-gray-300">"${r.comment}"</p>
+                    <div class="mt-2 text-[9px] text-gray-500 flex justify-between">
+                        <span>BY: ${r.user}</span>
+                        <div class="flex gap-2">
+                            <button class="hover:text-green-400">👍 Útil</button>
+                            <button class="hover:text-red-400">👎 Inútil</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function setupSearch() {
+            const input = document.getElementById('searchInput');
+            const dropdown = document.getElementById('resultsDropdown');
+
+            input.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                if (term.length < 2) {
+                    dropdown.classList.add('hidden');
+                    return;
+                }
+
+                const filtered = games.filter(g => g.name.toLowerCase().includes(term));
+                if (filtered.length > 0) {
+                    dropdown.classList.remove('hidden');
+                    dropdown.innerHTML = filtered.map(g => `
+                        <div class="p-3 hover:bg-cyan-900 cursor-pointer border-b border-gray-800 text-sm" onclick="selectGame('${g.name}')">
+                            ${g.name} <span class="text-[10px] text-gray-500">(${g.year})</span>
+                        </div>
+                    `).join('');
+                } else {
+                    dropdown.classList.add('hidden');
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!input.contains(e.target)) dropdown.classList.add('hidden');
+            });
+        }
+
+        function selectGame(name) {
+            document.getElementById('searchInput').value = name;
+            document.getElementById('resultsDropdown').classList.add('hidden');
+        }
+
+        function toggleView(view) {
+            const mainSite = document.getElementById('main-site');
+            const authPage = document.getElementById('auth-page');
+            const footer = document.querySelector('footer');
+
+            if (view === 'auth') {
+                mainSite.classList.add('hidden');
+                footer.classList.add('hidden');
+                authPage.classList.remove('hidden');
+            } else {
+                mainSite.classList.remove('hidden');
+                footer.classList.remove('hidden');
+                authPage.classList.add('hidden');
+            }
+            window.scrollTo(0,0);
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
